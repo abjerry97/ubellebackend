@@ -40,7 +40,12 @@ export class StudentController {
   @Post(':id/certification')
   @UseInterceptors(FileInterceptor('cert'))
   uploadCertificate(
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        // .addFileTypeValidator({ fileType: 'image/*' })
+        .addMaxSizeValidator({ maxSize: MAX_PROFILE_PICTURE_SIZE_IN_BYTES })
+        .build({ errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY }),
+    ) file: Express.Multer.File,
     @Param('id') studentId: string,
     @Body('name') name: string,
   ) {

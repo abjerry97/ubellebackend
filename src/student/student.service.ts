@@ -61,13 +61,26 @@ export class StudentService {
           console.log('The written has the following contents:');
         }
       });
-      await this.prisma.certification.create({
+      const newCertificate =await this.prisma.certification.create({
         data: { link: filename, studentId: existingStudent.id, name },
       });
+      
+      
+      return OkResponse('Upload Certificate Successful',HttpStatus.ACCEPTED, {certificate:newCertificate});
+ 
+    }
+    else {
+      throw new HttpException(
+        {
+          message: 'Certificate not uploaded',
+          error: 'Unable to to upload certificate',
+          errors: [`Certificate not uploaded`, 'ERR_BAD_REQUEST'],
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
-    return OkResponse('Upload Certificate Successful',HttpStatus.ACCEPTED, existingStudent);
-  }
+    }
 
   static studentSelectField() {
     return {
